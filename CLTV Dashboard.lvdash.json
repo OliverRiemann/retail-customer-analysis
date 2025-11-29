@@ -1,0 +1,158 @@
+{
+  "datasets": [
+    {
+      "name": "ea221bd8",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `portfolio`;\n",
+        "USE SCHEMA `cltv_schema`;\n",
+        "\n",
+        "SELECT CAST(CustomerID AS STRING) AS CustomerID, CLTV\n",
+        "FROM delta.`/Volumes/portfolio/cltv_schema/portfolio_crm/cltv_data`\n",
+        "ORDER BY CLTV DESC\n",
+        "LIMIT 10;"
+      ]
+    },
+    {
+      "name": "17afc6bd",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `portfolio`;\n",
+        "USE SCHEMA `cltv_schema`;\n",
+        "\n",
+        "SELECT CLTV\n",
+        "FROM delta.`/Volumes/portfolio/cltv_schema/portfolio_crm/cltv_data`\n",
+        "WHERE CLTV > 1e6 AND CLTV < 5e6;\n"
+      ]
+    },
+    {
+      "name": "07aa4920",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `portfolio`;\n",
+        "USE SCHEMA `cltv_schema`;\n",
+        "\n",
+        "SELECT \n",
+        "  FLOOR(CLTV / 1000000) * 1000000 AS CLTV_Bin,\n",
+        "  COUNT(*) AS Count\n",
+        "FROM delta.`/Volumes/portfolio/cltv_schema/portfolio_crm/cltv_data`\n",
+        "WHERE CLTV BETWEEN 1000000 AND 5000000\n",
+        "GROUP BY CLTV_Bin\n",
+        "ORDER BY CLTV_Bin;\n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "b8cc3a09",
+      "displayName": "CLTV Dashboard",
+      "layout": [
+        {
+          "widget": {
+            "name": "688f547e",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ea221bd8",
+                  "fields": [
+                    {
+                      "name": "sum(CLTV)",
+                      "expression": "SUM(`CLTV`)"
+                    },
+                    {
+                      "name": "CustomerID",
+                      "expression": "`CustomerID`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(CLTV)",
+                  "displayName": "CLTV",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "CustomerID",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "Top Customers by CLTV",
+                "showTitle": true
+              },
+              "mark": {
+                "layout": "group"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "514f5069",
+            "queries": [
+              {
+                "name": "b7610be8f45445cb982de107ebb71f4a",
+                "query": {
+                  "datasetName": "07aa4920",
+                  "fields": [
+                    {
+                      "name": "CLTV_Bin",
+                      "expression": "`CLTV_Bin`"
+                    },
+                    {
+                      "name": "column_670d6a4619",
+                      "expression": "SUM(`Count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 0,
+              "viz_spec": {
+                "display_name": "Histogram of CLTV",
+                "viz_type": "CHART",
+                "serialized_options": "{\"isAggregationOn\":true,\"series\":{\"error_y\":{\"type\":\"data\",\"visible\":true},\"stacking\":null},\"coefficient\":1,\"yAxis\":[{\"type\":\"-\"},{\"opposite\":true,\"type\":\"-\"}],\"columnConfigurationMap\":{\"x\":{\"column\":\"CLTV_Bin\",\"id\":\"column_670d6a4618\"},\"y\":[{\"column\":\"Count\",\"id\":\"column_670d6a4619\",\"transform\":\"SUM\"}]},\"alignYAxesAtZero\":true,\"direction\":{\"type\":\"counterclockwise\"},\"swappedAxes\":false,\"percentFormat\":\"0[.]00%\",\"textFormat\":\"\",\"legend\":{\"traceorder\":\"normal\"},\"globalSeriesType\":\"column\",\"version\":2,\"sizemode\":\"diameter\",\"seriesOptions\":{\"column_670d6a4619\":{\"name\":\"Count\",\"type\":\"column\",\"yAxis\":0}},\"error_y\":{\"type\":\"data\",\"visible\":true},\"sortX\":true,\"showDataLabels\":false,\"missingValuesAsZero\":true,\"useAggregationsUi\":true,\"numberFormat\":\"0,0.[00000]\",\"dateTimeFormat\":\"DD/MM/YYYY HH:mm\",\"sortY\":true,\"valuesOptions\":{},\"xAxis\":{\"labels\":{\"enabled\":true},\"type\":\"-\"}}",
+                "query_name": "b7610be8f45445cb982de107ebb71f4a"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
